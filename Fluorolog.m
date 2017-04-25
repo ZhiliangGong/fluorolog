@@ -71,6 +71,8 @@ classdef Fluorolog < handle
             
         end
         
+        % fitting
+        
         function fitBoundFractions(this, ubnd, bnd)
             
             if nargin > 1
@@ -269,6 +271,17 @@ classdef Fluorolog < handle
             
         end
         
+        function [kd, b_max] = oneSiteSpecificFit(conc, frac)
+            
+            lb = [1e-6, 0];
+            ub = [Inf, 1];
+            fitFun = @(p) (conc ./ (conc + p(1)) - frac * p(2));
+            options = optimoptions('lsqnonlin', 'display', 'off');
+            paras = lsqnonlin(fitFun, [1e-6, 1], lb, ub, options);
+            kd = paras(1);
+            b_max = paras(2);
+            
+        end
         
         function bound_frac = linearCombination(spec, ubnd, bnd)
             
